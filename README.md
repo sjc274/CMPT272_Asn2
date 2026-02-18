@@ -1,2 +1,2 @@
-# CMPT371_Asn2
-CMPT 371 Assignment 2
+# CMPT272_Asn2
+CMPT 272 Assignment 2
