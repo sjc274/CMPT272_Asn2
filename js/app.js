@@ -89,12 +89,41 @@ const elements = {
   sortSelect: document.getElementById("sortSelect"),
   resetBtn: document.getElementById("resetBtn"),
   demoBtn: document.getElementById("demoBtn"),
+  themeToggle: document.getElementById("themeToggle"),
   statusArea: document.getElementById("statusArea"),
   resultCount: document.getElementById("resultCount"),
   activeFilters: document.getElementById("activeFilters"),
   resultsGrid: document.getElementById("resultsGrid"),
   emptyState: document.getElementById("emptyState"),
 };
+
+// -------------------------
+// Dark mode (Bootstrap 5.3 color modes)
+// -------------------------
+const THEME_STORAGE_KEY = "catalog-theme";
+
+function setTheme(theme) {
+  const t = theme === "dark" ? "dark" : "light";
+  document.documentElement.setAttribute("data-bs-theme", t);
+  localStorage.setItem(THEME_STORAGE_KEY, t);
+
+  // Update button label
+  if (elements.themeToggle) {
+    elements.themeToggle.textContent = t === "dark" ? "☀️ Light" : "🌙 Dark";
+  }
+}
+
+function initTheme() {
+  const saved = localStorage.getItem(THEME_STORAGE_KEY);
+  if (saved === "dark" || saved === "light") {
+    setTheme(saved);
+    return;
+  }
+
+  const prefersDark =
+    window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  setTheme(prefersDark ? "dark" : "light");
+}
 
 const detailsModal = new bootstrap.Modal(document.getElementById("detailsModal"));
 const modalTitle = document.getElementById("modalTitle");
@@ -281,6 +310,30 @@ function populateFilters(items) {
     elements.genreFilter.innerHTML = `<option value="">All</option>` + genres.map(g => `<option value="${escapeHtml(g)}">${escapeHtml(g)}</option>`).join("");
 }
 
+function updateGenreFilterForType(selectedType) {
+  const type = (selectedType || "").trim().toLowerCase();
+
+  const source = !type
+    ? allItems
+    : allItems.filter((i) => (i.type || "").toLowerCase() === type);
+
+  const genres = uniqueSorted(source.map((i) => i.genre).filter((g) => g));
+  const current = elements.genreFilter.value;
+
+  elements.genreFilter.innerHTML =
+    `<option value="">All</option>` +
+    genres
+      .map((g) => `<option value="${escapeHtml(g)}">${escapeHtml(g)}</option>`)
+      .join("");
+
+  if (current) {
+    const stillValid = genres.some(
+      (g) => g.toLowerCase() === current.trim().toLowerCase()
+    );
+    if (!stillValid) elements.genreFilter.value = "";
+  }
+}
+
 function loadItems(items) {
     allItems = items;
 
@@ -295,9 +348,11 @@ function loadItems(items) {
     populateFilters(allItems);
 
     elements.typeFilter.value = "";
-    elements.genreFilter.value = "";
     elements.searchInput.value = "";
     elements.sortSelect.value = "title-asc";
+
+    updateGenreFilterForType(elements.typeFilter.value);
+    elements.genreFilter.value = "";
 
     setStatus("success", `Loaded ${allItems.length} items.`);
     applyFiltersAndSort();
@@ -334,6 +389,7 @@ elements.searchInput.addEventListener("input", () => {
     applyFiltersAndSort();
 });
 elements.typeFilter.addEventListener("change", () => {
+    updateGenreFilterForType(elements.typeFilter.value);
     applyFiltersAndSort();
 });
 elements.genreFilter.addEventListener("change", () => {
@@ -358,7 +414,7 @@ elements.resetBtn.addEventListener("click", (e) => {
     setStatus("success", "Reset successfully!");
     setTimeout(() => {
         setStatus("info", "Please upload a CSV file to get started.");
-    }, 800);
+    }, 1500);
     render([], getCriteria());
 });
 
@@ -389,4 +445,13 @@ Baldurs Gate 3,game,Larian Studios,2023,CRPG,4.9,A deep narrative driven role pl
 setControlsEnabled(false);
 setStatus("info", "Please upload a CSV file to get started.");
 render([], getCriteria());
+
+initTheme();
+
+if (elements.themeToggle) {
+  elements.themeToggle.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-bs-theme") || "light";
+    setTheme(current === "dark" ? "light" : "dark");
+  });
+}
 
