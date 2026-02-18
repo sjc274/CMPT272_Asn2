@@ -1,5 +1,4 @@
 # Create README.md content
-readme = """# 📚 Interactive Catalog Viewer  
 **CMPT 272 – Assignment 2**  
 **Jiachen Sun**
 
@@ -167,4 +166,3 @@ This project satisfies the following assignment criteria:
 - No external parsing libraries were used.
 - Bootstrap is used strictly for layout and styling.
 - The project focuses on both functionality and clean design.
-"""
