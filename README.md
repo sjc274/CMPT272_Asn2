@@ -1,15 +1,3 @@
-import zipfile, os, textwrap, pathlib, shutil, re, json, time
-from pathlib import Path
-
-zip_path = Path("/mnt/data/CMPT272_Asn2_darkmode.zip")
-workdir = Path("/mnt/data/readme_apply_work")
-if workdir.exists():
-    shutil.rmtree(workdir)
-workdir.mkdir(parents=True)
-
-with zipfile.ZipFile(zip_path, 'r') as z:
-    z.extractall(workdir)
-
 # Create README.md content
 readme = """# 📚 Interactive Catalog Viewer  
 **CMPT 272 – Assignment 2**  
@@ -180,18 +168,3 @@ This project satisfies the following assignment criteria:
 - Bootstrap is used strictly for layout and styling.
 - The project focuses on both functionality and clean design.
 """
-# Write README.md at root
-(workdir / "README.md").write_text(readme, encoding="utf-8")
-
-# Re-zip
-out_zip = Path("/mnt/data/CMPT272_Asn2_darkmode_with_README.zip")
-if out_zip.exists():
-    out_zip.unlink()
-
-with zipfile.ZipFile(out_zip, 'w', compression=zipfile.ZIP_DEFLATED) as z:
-    for path in workdir.rglob("*"):
-        if path.is_file():
-            arcname = path.relative_to(workdir).as_posix()
-            z.write(path, arcname)
-
-out_zip
