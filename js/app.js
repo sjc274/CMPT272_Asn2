@@ -344,14 +344,22 @@ elements.sortSelect.addEventListener("change", () => {
 });
 
 elements.resetBtn.addEventListener("click", (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!allItems.length) return;
-  elements.searchInput.value = "";
-  elements.typeFilter.value = "";
-  elements.genreFilter.value = "";
-  elements.sortSelect.value = "title-asc";
-  applyFiltersAndSort();
+    allItems = [];
+    viewItems = [];
+    elements.typeFilter.innerHTML = `<option value="">All</option>`;
+    elements.genreFilter.innerHTML = `<option value="">All</option>`;
+    elements.searchInput.value = "";
+    elements.sortSelect.value = "title-asc";
+    elements.fileInput.value = "";
+
+    setControlsEnabled(false);
+    setStatus("success", "Reset successfully!");
+    setTimeout(() => {
+        setStatus("info", "Please upload a CSV file to get started.");
+    }, 800);
+    render([], getCriteria());
 });
 
 elements.demoBtn.addEventListener("click", () => {
