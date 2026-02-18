@@ -129,6 +129,10 @@ The following tools were used to assist development:
   - Assisted with layout refinement
   - Provided minor code structure suggestions
 
+- **ChatGPT**
+  - Explaining on Bootstrap / CSS class name
+  - Assisted with javascript logic
+
 - **Genmoji (Apple)**
   - Used to generate the custom icon used in the application interface
 
